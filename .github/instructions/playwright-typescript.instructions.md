@@ -10,6 +10,9 @@ applyTo: '**'
 - **Assertions**: Use auto-retrying web-first assertions. These assertions start with the `await` keyword (e.g., `await expect(locator).toHaveText()`). Avoid `expect(locator).toBeVisible()` unless specifically testing for visibility changes.
 - **Timeouts**: Rely on Playwright's built-in auto-waiting mechanisms. Avoid hard-coded waits or increased default timeouts.
 - **Clarity**: Use descriptive test and step titles that clearly state the intent. Add comments only to explain complex logic or non-obvious interactions.
+- **Page Object Model (POM)**: Every test must interact with the UI through Page Object classes. Encapsulate element locators and interaction logic within these classes.
+- **Fluent Interface**: Design Page Object methods to return this or the next Page object to allow method chaining, improving readability.
+- **Clean Code**: Follow SOLID principles. Keep tests focused on business logic and Page Objects focused on implementation details.
 
 
 ### Test Structure
@@ -30,6 +33,7 @@ applyTo: '**'
 - **Text Content**: Use `toHaveText` for exact text matches and `toContainText` for partial matches.
 - **Navigation**: Use `toHaveURL` to verify the page URL after an action.
 
+---
 
 ## Example Test Structure
 
@@ -67,6 +71,36 @@ test.describe('Movie Search Feature', () => {
   });
 });
 ```
+
+## Locator Strategy (Priority Order)
+Use locators that mirror how users interact with the page:
+
+```typescript
+// ✅ BEST: Role-based (accessible, resilient)
+page.getByRole('button', { name: 'Submit' })
+page.getByRole('textbox', { name: 'Email' })
+page.getByRole('link', { name: 'Sign up' })
+page.getByRole('heading', { name: 'Welcome' })
+
+// ✅ GOOD: User-facing text
+page.getByLabel('Email address')
+page.getByPlaceholder('Enter your email')
+page.getByText('Welcome back')
+page.getByTitle('Profile settings')
+
+// ✅ GOOD: Test IDs (stable, explicit)
+page.getByTestId('submit-button')
+page.getByTestId('user-avatar')
+
+// ⚠️ AVOID: CSS selectors (brittle)
+page.locator('.btn-primary')
+page.locator('#submit')
+
+// ❌ NEVER: XPath (extremely brittle)
+page.locator('//div[@class="container"]/button[1]')
+```
+
+---
 
 ## Test Execution Strategy
 
