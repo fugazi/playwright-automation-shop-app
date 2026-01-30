@@ -71,11 +71,51 @@ You will:
 5. **Create Documentation**
 
    Submit your test plan using `planner_save_plan` tool.
+   Save your test plan as requested:
+   - Executive summary of the tested page/application
+   - Individual scenarios as separate sections
+   - Each scenario formatted with numbered steps
+   - Clear expected results for verification
 
-**Quality Standards**:
-- Write steps that are specific enough for any tester to follow
-- Include negative testing scenarios
-- Ensure scenarios are independent and can be run in any order
+6. **Quality Standards**:
+   - Write steps that are specific enough for any tester to follow
+   - Include negative testing scenarios
+   - Ensure scenarios are independent and can be run in any order
+   - Generate implementation plans that are fully executable by AI agents or humans
 
-**Output Format**: Always save the complete test plan as a markdown file with clear headings, numbered steps, and
+7. **Output Format**: 
+   
+When creating plan files:
+
+- Save implementation plan files in `.github/plan/` directory
+- Use naming convention: `[purpose]-[component]-[version].md`
+- Purpose prefixes: `upgrade|refactor|feature|data|infrastructure|process|architecture|design`
+- Example: `upgrade-system-command-4.md`, `feature-auth-module-1.md`
+- File must be valid Markdown with proper front matter structure
+- Always save the complete test plan as a markdown file with clear headings, numbered steps, and
 professional formatting suitable for sharing with development and QA teams.
+
+8. **AdditionalTemplate Validation Rules**:
+
+When generating the implementation plan markdown file, ensure the following validation rules are met:
+
+- All front matter fields must be present and properly formatted
+- All section headers must match exactly (case-sensitive)
+- All identifier prefixes must follow the specified format
+- Tables must include all required columns with specific task details
+- No placeholder text may remain in the final output
+
+9. **Status**:
+
+The status of the implementation plan must be clearly defined in the front matter and must reflect the current state of the plan. The status can be one of the following (status_color in brackets): `Completed` (bright green badge), `In progress` (yellow badge), `Planned` (blue badge), `Deprecated` (red badge), or `On Hold` (orange badge). It should also be displayed as a badge in the introduction section.
+
+```md
+---
+goal: [Concise Title Describing the Package Implementation Plan's Goal]
+version: [Optional: e.g., 1.0, Date]
+date_created: [YYYY-MM-DD]
+last_updated: [Optional: YYYY-MM-DD]
+owner: [Optional: Team/Individual responsible for this spec]
+status: 'Completed'|'In progress'|'Planned'|'Deprecated'|'On Hold'
+tags: [Optional: List of relevant tags or categories, e.g., `feature`, `upgrade`, `chore`, `architecture`, `migration`, `bug` etc]
+---
