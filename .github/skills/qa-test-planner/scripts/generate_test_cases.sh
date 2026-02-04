@@ -146,13 +146,13 @@ echo ""
 
 prompt_input "Test data required (e.g., user credentials, sample data):" TEST_DATA false
 
-# Step 6: Figma Design (if UI test)
+# Step 6: Playwright Validation (if UI test)
 echo ""
 if [ "$TEST_TYPE" = "UI/Visual" ]; then
-    echo -e "${MAGENTA}━━━ Step 6: Figma Design Validation ━━━${NC}"
+    echo -e "${MAGENTA}━━━ Step 6: Playwright UI Validation ━━━${NC}"
     echo ""
     
-    prompt_input "Figma design URL (if applicable):" FIGMA_URL false
+    prompt_input "Application URL to validate:" APP_URL false
     prompt_input "Visual elements to validate:" VISUAL_CHECKS false
 fi
 
@@ -220,23 +220,31 @@ ${TEST_DATA:-No specific test data required}
 
 EOF
 
-# Add Figma section if UI test
-if [ "$TEST_TYPE" = "UI/Visual" ] && [ -n "$FIGMA_URL" ]; then
+# Add Playwright section if UI test
+if [ "$TEST_TYPE" = "UI/Visual" ] && [ -n "$APP_URL" ]; then
     cat >> "$OUTPUT_FILE" << EOF
-## Visual Validation (Figma)
+## Playwright UI Validation
 
-**Design Reference:** ${FIGMA_URL}
+**Application URL:** ${APP_URL}
 
 **Elements to validate:**
 ${VISUAL_CHECKS}
 
+**Playwright MCP Commands:**
+\`\`\`
+"Navigate to ${APP_URL}"
+"Get the accessibility snapshot"
+"Take a screenshot"
+"Verify elements match expected structure"
+\`\`\`
+
 **Verification checklist:**
-- [ ] Layout matches Figma design
-- [ ] Spacing (padding/margins) accurate
-- [ ] Typography (font, size, weight, color) correct
-- [ ] Colors match design system
-- [ ] Component states (hover, active, disabled) implemented
-- [ ] Responsive behavior as designed
+- [ ] All elements present in accessibility snapshot
+- [ ] Layout renders correctly
+- [ ] Interactive elements are keyboard navigable
+- [ ] Component states (hover, focus, disabled) work correctly
+- [ ] Responsive behavior verified at breakpoints
+- [ ] No console errors
 
 ---
 
@@ -294,8 +302,9 @@ echo -e "${YELLOW}Next steps:${NC}"
 echo "1. Review test case for completeness"
 echo "2. Add to test suite"
 echo "3. Execute test and update results"
-if [ "$TEST_TYPE" = "UI/Visual" ] && [ -n "$FIGMA_URL" ]; then
-    echo "4. Validate against Figma design using MCP"
+if [ "$TEST_TYPE" = "UI/Visual" ] && [ -n "$APP_URL" ]; then
+    echo "4. Validate with Playwright MCP"
+    echo "5. Consider generating automated test with generate_playwright_test.sh"
 fi
 echo ""
 echo -e "${CYAN}Tip: Create multiple test cases for comprehensive coverage${NC}"

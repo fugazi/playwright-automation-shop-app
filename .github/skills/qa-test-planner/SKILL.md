@@ -1,11 +1,11 @@
 ---
 name: qa-test-planner
-description: Generate comprehensive test plans, manual test cases, regression test suites, and bug reports for QA engineers. Includes Figma MCP integration for design validation.
+description: Generate comprehensive test plans, manual test cases, automated Playwright tests, regression test suites, and bug reports for QA Automation engineers. Includes Playwright MCP integration for browser-based test execution and validation.
 ---
 
 # QA Test Planner
 
-A comprehensive skill for QA engineers to create test plans, generate manual test cases, build regression test suites, validate designs against Figma, and document bugs effectively.
+A comprehensive skill for QA Automation engineers to create test plans, generate manual test cases, build automated Playwright tests, create regression test suites, validate UI with browser automation, and document bugs effectively.
 
 > **Activation:** This skill is triggered only when explicitly called by name (e.g., `/qa-test-planner`, `qa-test-planner`, or `use the skill qa-test-planner`).
 
@@ -23,14 +23,19 @@ A comprehensive skill for QA engineers to create test plans, generate manual tes
 "Generate manual test cases for the checkout flow"
 ```
 
+**Create automated Playwright tests:**
+```
+"Create Playwright automated tests for the login flow"
+```
+
+**Validate UI with browser:**
+```
+"Navigate to the login page and validate all form elements are visible"
+```
+
 **Build regression suite:**
 ```
 "Build a regression test suite for the payment module"
-```
-
-**Validate against Figma:**
-```
-"Compare the login page against the Figma design at [URL]"
 ```
 
 **Create bug report:**
@@ -46,8 +51,9 @@ A comprehensive skill for QA engineers to create test plans, generate manual tes
 |------|--------------|------|
 | Test Plan | Strategy, scope, schedule, risks | 10-15 min |
 | Test Cases | Step-by-step instructions, expected results | 5-10 min each |
+| Automated Tests | Playwright .spec.ts files with assertions | 5-15 min each |
 | Regression Suite | Smoke tests, critical paths, execution order | 15-20 min |
-| Figma Validation | Design-implementation comparison, discrepancy list | 10-15 min |
+| Browser Validation | Live UI validation, screenshots, element checks | 5-10 min |
 | Bug Report | Reproducible steps, environment, evidence | 5 min |
 
 ---
@@ -61,15 +67,20 @@ Your Request
 ┌─────────────────────────────────────────────────────┐
 │ 1. ANALYZE                                          │
 │    • Parse feature/requirement                      │
-│    • Identify test types needed                     │
+│    • Identify test types needed (manual/automated)  │
 │    • Determine scope and priorities                 │
 ├─────────────────────────────────────────────────────┤
 │ 2. GENERATE                                         │
 │    • Create structured deliverables                 │
-│    • Apply templates and best practices             │
+│    • Apply Playwright best practices                │
 │    • Include edge cases and variations              │
 ├─────────────────────────────────────────────────────┤
-│ 3. VALIDATE                                         │
+│ 3. EXECUTE (with Playwright MCP)                    │
+│    • Navigate and interact with browser             │
+│    • Capture screenshots and evidence               │
+│    • Validate UI elements and behavior              │
+├─────────────────────────────────────────────────────┤
+│ 4. VALIDATE                                         │
 │    • Check completeness                             │
 │    • Verify traceability                            │
 │    • Ensure actionable steps                        │
@@ -87,8 +98,9 @@ QA Deliverable Ready
 
 | Script | Purpose | Usage |
 |--------|---------|-------|
-| `./scripts/generate_test_cases.sh` | Create test cases interactively | Step-by-step prompts |
+| `./scripts/generate_test_cases.sh` | Create manual test cases interactively | Step-by-step prompts |
 | `./scripts/create_bug_report.sh` | Generate bug reports | Guided input collection |
+| `./scripts/generate_playwright_test.sh` | Create automated Playwright tests | Feature-based prompts |
 
 ### Natural Language
 
@@ -96,8 +108,9 @@ QA Deliverable Ready
 |---------|--------|
 | "Create test plan for {feature}" | Complete test plan document |
 | "Generate {N} test cases for {feature}" | Numbered test cases with steps |
+| "Create Playwright tests for {feature}" | .spec.ts automated test files |
 | "Build smoke test suite" | Critical path tests |
-| "Compare with Figma at {URL}" | Visual validation checklist |
+| "Navigate to {URL} and validate {elements}" | Live browser validation with screenshots |
 | "Document bug: {description}" | Structured bug report |
 
 ---
@@ -125,13 +138,21 @@ QA Deliverable Ready
 - Targeted regression (30-60 min)
 - Execution order and dependencies
 
-### 4. Figma Validation
-- Component-by-component comparison
-- Spacing and typography checks
-- Color and visual consistency
-- Interactive state validation
+### 4. Automated Playwright Tests
+- Role-based locator strategies
+- Web-first assertions
+- Page Object Model structure
+- test.step() grouping for readability
+- Screenshot capture on failure
 
-### 5. Bug Reports
+### 5. Browser Validation (via Playwright MCP)
+- Live UI element verification
+- Screenshot capture for evidence
+- Console log inspection
+- Form interaction testing
+- Responsive viewport validation
+
+### 6. Bug Reports
 - Clear reproduction steps
 - Environment details
 - Evidence (screenshots, logs)
@@ -165,6 +186,13 @@ QA Deliverable Ready
 - [ ] Test data available
 - [ ] Priority assigned
 
+**Automated Tests:**
+- [ ] Role-based locators used
+- [ ] Web-first assertions implemented
+- [ ] Page Object Model applied
+- [ ] test.step() grouping for clarity
+- [ ] Error handling and screenshots
+
 **Bug Reports:**
 - [ ] Reproducible steps
 - [ ] Environment documented
@@ -178,7 +206,7 @@ QA Deliverable Ready
 - [Test Case Templates](references/test_case_templates.md) - Standard formats for all test types
 - [Bug Report Templates](references/bug_report_templates.md) - Documentation templates
 - [Regression Testing Guide](references/regression_testing.md) - Suite building and execution
-- [Figma Validation Guide](references/figma_validation.md) - Design-implementation validation
+- [Playwright Automation Guide](references/playwright_automation.md) - Browser automation and test generation
 
 ---
 
@@ -381,69 +409,113 @@ QA Deliverable Ready
 </details>
 
 <details>
-<summary><strong>Deep Dive: Figma MCP Integration</strong></summary>
+<summary><strong>Deep Dive: Playwright MCP Integration</strong></summary>
 
-### Design Validation Workflow
+### Browser Automation Workflow
 
 **Prerequisites:**
-- Figma MCP server configured
-- Access to Figma design files
-- Figma URLs for components/pages
+- Playwright MCP server configured
+- Node.js installed
+- Application running locally or accessible URL
+
+**Playwright MCP Tools Available:**
+
+| Tool | Purpose |
+|------|---------|
+| `browser_navigate` | Navigate to a URL |
+| `browser_snapshot` | Get accessibility tree (DOM state) |
+| `browser_click` | Click on elements |
+| `browser_fill_form` | Fill form fields |
+| `browser_take_screenshot` | Capture screenshots |
+| `browser_console_messages` | View console logs |
+| `browser_hover` | Hover over elements |
+| `browser_press_key` | Keyboard interactions |
 
 **Process:**
 
-1. **Get Design Specs from Figma**
+1. **Navigate and Capture Initial State**
 ```
-"Get the button specifications from Figma file [URL]"
-
-Response includes:
-- Dimensions (width, height)
-- Colors (background, text, border)
-- Typography (font, size, weight)
-- Spacing (padding, margin)
-- Border radius
-- States (default, hover, active, disabled)
+"Navigate to http://localhost:3000/login"
+"Take a screenshot of the current page"
+"Get the accessibility snapshot"
 ```
 
-2. **Compare Implementation**
+2. **Validate UI Elements**
 ```
-TC: Primary Button Visual Validation
-1. Inspect primary button in browser dev tools
-2. Compare against Figma specs:
-   - Dimensions: 120x40px
-   - Border-radius: 8px
-   - Background color: #0066FF
-   - Font: 16px Medium #FFFFFF
-3. Document discrepancies
+Using browser_snapshot to verify:
+- Form fields are present and labeled
+- Buttons have correct text
+- Error messages are accessible
+- Page structure matches requirements
 ```
 
-3. **Create Bug if Mismatch**
+3. **Test User Interactions**
 ```
-BUG: Primary button color doesn't match design
-Severity: Medium
-Expected (Figma): #0066FF
-Actual (Implementation): #0052CC
-Screenshot: [attached]
-Figma link: [specific component]
+"Click the 'Login' button"
+"Fill the email field with 'test@example.com'"
+"Verify the error message appears"
+"Take a screenshot of the error state"
 ```
 
-### What to Validate
-
-| Element | What to Check | Tool |
-|---------|---------------|------|
-| Colors | Hex values exact | Browser color picker |
-| Spacing | Padding/margin px | DevTools computed styles |
-| Typography | Font, size, weight | DevTools font panel |
-| Layout | Width, height, position | DevTools box model |
-| States | Hover, active, focus | Manual interaction |
-| Responsive | Breakpoint behavior | DevTools device mode |
-
-### Example Queries
+4. **Capture Evidence for Bug Reports**
 ```
-"Get button specifications from Figma design [URL]"
-"Compare navigation menu implementation against Figma design"
-"Extract spacing values for dashboard layout from Figma"
-"List all color tokens used in Figma design system"
+"Take a screenshot of the current page"
+"Get console messages for any errors"
+"Document the accessibility tree for element structure"
+```
+
+### What to Validate with Playwright MCP
+
+| Element | How to Validate | Tool |
+|---------|-----------------|------|
+| Element presence | Check accessibility snapshot | `browser_snapshot` |
+| Visual state | Capture screenshot | `browser_take_screenshot` |
+| Form fields | Fill and verify | `browser_fill_form` |
+| Buttons/Links | Click and verify navigation | `browser_click` |
+| Console errors | Check for JS errors | `browser_console_messages` |
+| Responsive views | Resize and snapshot | `browser_resize` |
+
+### Example Validation Queries
+```
+"Navigate to the checkout page and verify all form fields are present"
+"Fill the login form and capture screenshot of the result"
+"Click the submit button and check for console errors"
+"Validate the navigation menu has all required links"
+"Test the form validation by submitting empty fields"
+```
+
+### Generating Automated Tests from Validation
+
+After validating with Playwright MCP, generate automated .spec.ts tests:
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Login Page Validation', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('http://localhost:3000/login');
+  });
+
+  test('displays all required form elements', async ({ page }) => {
+    await test.step('Verify form fields', async () => {
+      await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
+      await expect(page.getByRole('textbox', { name: 'Password' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Login' })).toBeEnabled();
+    });
+  });
+
+  test('shows error for invalid credentials', async ({ page }) => {
+    await test.step('Submit invalid credentials', async () => {
+      await page.getByRole('textbox', { name: 'Email' }).fill('invalid@test.com');
+      await page.getByRole('textbox', { name: 'Password' }).fill('wrongpass');
+      await page.getByRole('button', { name: 'Login' }).click();
+    });
+
+    await test.step('Verify error message', async () => {
+      await expect(page.getByRole('alert')).toContainText('Invalid credentials');
+    });
+  });
+});
 ```
 
 </details>
@@ -733,18 +805,86 @@ Verify navigation menu works correctly on mobile devices
 3. Tap menu item
    **Expected:** Navigate to section, menu closes
 
-4. Compare against Figma mobile design [link]
-   **Expected:**
-   - Menu width: 280px
-   - Slide animation: 300ms ease-out
-   - Overlay opacity: 0.5, color #000000
-   - Font size: 16px, line-height 24px
+4. Validate with Playwright MCP
+   **Actions:**
+   - Navigate to homepage with mobile viewport
+   - Take screenshot of menu closed state
+   - Click hamburger icon
+   - Take screenshot of menu open state
+   - Verify menu items via accessibility snapshot
 
 ### Breakpoints to Test
 - 375px (iPhone SE)
 - 390px (iPhone 14)
 - 428px (iPhone 14 Pro Max)
 - 360px (Galaxy S21)
+```
+
+</details>
+
+<details>
+<summary><strong>Example: Playwright Automated Test</strong></summary>
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Mobile Navigation Menu', () => {
+  test.use({ viewport: { width: 375, height: 667 } });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('https://app.example.com');
+  });
+
+  test('TC-UI-045: Mobile navigation menu opens and closes correctly', async ({ page }) => {
+    await test.step('Verify hamburger menu is visible on mobile', async () => {
+      await expect(page.getByRole('button', { name: /menu/i })).toBeVisible();
+      await expect(page.getByRole('navigation')).toBeHidden();
+    });
+
+    await test.step('Open navigation menu', async () => {
+      await page.getByRole('button', { name: /menu/i }).click();
+      await expect(page.getByRole('navigation')).toBeVisible();
+      await expect(page.getByRole('button', { name: /close/i })).toBeVisible();
+    });
+
+    await test.step('Verify menu items are accessible', async () => {
+      await expect(page.getByRole('navigation')).toMatchAriaSnapshot(`
+        - navigation:
+          - list:
+            - listitem:
+              - link "Home"
+            - listitem:
+              - link "Products"
+            - listitem:
+              - link "About"
+            - listitem:
+              - link "Contact"
+      `);
+    });
+
+    await test.step('Close menu and verify navigation', async () => {
+      await page.getByRole('link', { name: 'Products' }).click();
+      await expect(page).toHaveURL(/.*products/);
+      await expect(page.getByRole('navigation')).toBeHidden();
+    });
+  });
+
+  test('navigation menu is responsive across breakpoints', async ({ page }) => {
+    const breakpoints = [
+      { width: 375, name: 'iPhone SE' },
+      { width: 390, name: 'iPhone 14' },
+      { width: 428, name: 'iPhone 14 Pro Max' },
+      { width: 360, name: 'Galaxy S21' },
+    ];
+
+    for (const bp of breakpoints) {
+      await test.step(`Test at ${bp.name} (${bp.width}px)`, async () => {
+        await page.setViewportSize({ width: bp.width, height: 800 });
+        await expect(page.getByRole('button', { name: /menu/i })).toBeVisible();
+      });
+    }
+  });
+});
 ```
 
 </details>
