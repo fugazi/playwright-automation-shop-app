@@ -519,7 +519,7 @@ Build a lean, fast-running smoke test suite covering the most critical user path
 
 ---
 
-## Phase 5 — Extended Regression Test Suite
+## Phase 5 — Extended Regression Test Suite (Aqui vamos, revisar errores)
 
 ### Objective
 
