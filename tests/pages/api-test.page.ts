@@ -22,50 +22,58 @@ export class ApiTestPage extends BasePage {
 
   // ── Configuration Fields ──────────────────────────────────────────
 
-  get baseUrlInput(): Locator {
-    return this.page.getByRole('textbox', { name: 'Base URL' });
-  }
-
+  /** Email input — accessible name comes from placeholder text. */
   get emailInput(): Locator {
-    return this.page.getByRole('textbox', { name: 'Email' });
+    return this.page.locator('input[type="email"]');
   }
 
+  /** Password input — accessible name comes from placeholder text. */
   get passwordInput(): Locator {
-    return this.page.getByRole('textbox', { name: 'Password' });
+    return this.page.locator('input[type="password"]');
   }
 
   get productIdInput(): Locator {
-    return this.page.getByRole('textbox', { name: 'Product ID' });
+    return this.page.getByPlaceholder('1', { exact: true }).first();
   }
 
   get quantityInput(): Locator {
-    return this.page.getByRole('spinbutton', { name: 'Quantity' });
+    return this.page.getByRole('spinbutton');
   }
 
-  get orderIdInput(): Locator {
-    return this.page.getByRole('textbox', { name: 'Order ID' });
+  get searchTermInput(): Locator {
+    return this.page.getByPlaceholder('headphones');
+  }
+
+  get categoryInput(): Locator {
+    return this.page.getByPlaceholder('Electronics');
   }
 
   // ── Test Group Accordions ─────────────────────────────────────────
 
   get authTestsAccordion(): Locator {
-    return this.page.getByRole('button', { name: /Authentication Tests/ });
+    return this.page.getByRole('button', { name: /Authentication Tests/i });
   }
 
   get productTestsAccordion(): Locator {
-    return this.page.getByRole('button', { name: /Product Tests/ });
+    return this.page.getByRole('button', { name: /Product Tests/i });
   }
 
   get cartTestsAccordion(): Locator {
-    return this.page.getByRole('button', { name: /Cart Tests/ });
+    return this.page.getByRole('button', { name: /Cart Tests/i });
   }
 
   get orderTestsAccordion(): Locator {
-    return this.page.getByRole('button', { name: /Order Tests/ });
+    return this.page.getByRole('button', { name: /Order Tests/i });
   }
 
   get utilityTestsAccordion(): Locator {
-    return this.page.getByRole('button', { name: /Utility Tests/ });
+    return this.page.getByRole('button', { name: /Utility Tests/i });
+  }
+
+  // ── Response Panel ────────────────────────────────────────────────
+
+  get responseHeading(): Locator {
+    return this.page.getByRole('heading', { name: 'API Response' });
   }
 
   // ── Action Buttons ────────────────────────────────────────────────
@@ -79,14 +87,14 @@ export class ApiTestPage extends BasePage {
   }
 
   get logoutButton(): Locator {
-    return this.page.getByRole('button', { name: 'Logout' });
+    return this.page.getByTestId('auth-logout-button');
   }
 
   get getProductsButton(): Locator {
-    return this.page.getByRole('button', { name: 'Get Products' });
+    return this.page.getByTestId('products-get-all-button');
   }
 
   get getProductButton(): Locator {
-    return this.page.getByRole('button', { name: 'Get Product' });
+    return this.page.getByTestId('products-get-single-button');
   }
 }

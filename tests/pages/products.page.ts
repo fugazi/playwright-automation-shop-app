@@ -14,7 +14,21 @@ export class ProductsPage extends BasePage {
   // ── Search (in-page) ─────────────────────────────────────────────
 
   get searchInput(): Locator {
-    return this.page.getByRole('searchbox', { name: 'Search products' });
+    return this.page.getByTestId('search-products-input');
+  }
+
+  /** Fill the search box and press Enter to filter products. */
+  async searchProducts(query: string): Promise<void> {
+    await this.searchInput.fill(query);
+    await this.searchInput.press('Enter');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  /** Clear the search box and press Enter to reset filtering. */
+  async clearSearch(): Promise<void> {
+    await this.searchInput.clear();
+    await this.searchInput.press('Enter');
+    await this.page.waitForLoadState('networkidle');
   }
 
   // ── Filters ───────────────────────────────────────────────────────
@@ -53,6 +67,11 @@ export class ProductsPage extends BasePage {
   /** Get the "Add to cart" or product link inside a product card. */
   productLink(name: string): Locator {
     return this.page.getByRole('link', { name });
+  }
+
+  /** Locator that matches visible text within the product grid. */
+  productTextMatch(text: string | RegExp): Locator {
+    return this.page.getByText(text).first();
   }
 
   // ── Results Info ──────────────────────────────────────────────────

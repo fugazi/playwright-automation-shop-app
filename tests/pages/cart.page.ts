@@ -85,10 +85,10 @@ export class CartPage extends BasePage {
   }
 
   get stepShipping(): Locator {
-    return this.page.getByText('Shipping');
+    return this.page.getByText('2Shipping');
   }
 
   get stepPayment(): Locator {
-    return this.page.getByText('Payment');
+    return this.page.getByText('3Payment');
   }
 }

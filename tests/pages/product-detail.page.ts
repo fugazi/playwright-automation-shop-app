@@ -91,7 +91,7 @@ export class ProductDetailPage extends BasePage {
   }
 
   get copyLinkButton(): Locator {
-    return this.page.getByRole('button', { name: 'Copy Link' });
+    return this.page.getByRole('button', { name: 'Copy product link' });
   }
 
   // ── Customer Reviews ──────────────────────────────────────────────

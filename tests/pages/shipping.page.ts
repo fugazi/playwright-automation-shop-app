@@ -29,29 +29,34 @@ export class ShippingPage extends BasePage {
 
   // ── Shipping Tiers ────────────────────────────────────────────────
 
-  get standardShippingHeading(): Locator {
-    return this.page.getByRole('heading', { name: 'Standard Shipping' });
+  get standardShippingOption(): Locator {
+    return this.page.getByTestId('shipping-option-standard');
   }
 
-  get expressShippingHeading(): Locator {
-    return this.page.getByRole('heading', { name: 'Express Shipping' });
+  get expressShippingOption(): Locator {
+    return this.page.getByTestId('shipping-option-express');
   }
 
-  get overnightShippingHeading(): Locator {
-    return this.page.getByRole('heading', { name: 'Overnight Shipping' });
+  get overnightShippingOption(): Locator {
+    return this.page.getByTestId('shipping-option-overnight');
+  }
+
+  get shippingOptionsHeading(): Locator {
+    return this.page.getByTestId('shipping-options-title');
   }
 
   // ── FAQ Sections ──────────────────────────────────────────────────
 
-  /** All FAQ accordion buttons. */
-  get faqButtons(): Locator {
-    return this.page.getByRole('button', { name: /^(?!Calculate)/ }).filter({
-      hasText: /\?/,
-    });
+  get faqSection(): Locator {
+    return this.page.getByTestId('shipping-faq');
   }
 
-  /** Toggle a specific FAQ accordion by its question text. */
-  faqToggle(questionText: string): Locator {
-    return this.page.getByRole('button', { name: questionText });
+  get faqHeading(): Locator {
+    return this.page.getByTestId('shipping-faq-title');
+  }
+
+  /** All FAQ card titles (static — not accordion). */
+  get faqCards(): Locator {
+    return this.faqSection.locator('[data-slot="card"]');
   }
 }

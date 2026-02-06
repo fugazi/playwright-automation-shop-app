@@ -75,7 +75,7 @@ export class FooterComponent {
     return this.footer.getByRole('link', { name: 'Privacy Policy' });
   }
 
-  get cookieSettingsButton(): Locator {
-    return this.footer.getByRole('button', { name: 'Cookie Settings' });
+  get cookieSettingsLink(): Locator {
+    return this.footer.getByRole('link', { name: 'Manage your Cookie Settings' });
   }
 }

@@ -17,51 +17,51 @@ export class TermsPage extends BasePage {
     return this.page.getByRole('heading', { name: '1. Agreement to Terms' });
   }
 
-  get intellectualPropertyHeading(): Locator {
+  get useLicenseHeading(): Locator {
     return this.page.getByRole('heading', {
-      name: '2. Intellectual Property',
+      name: '2. Use License',
     });
   }
 
-  get userResponsibilitiesHeading(): Locator {
+  get disclaimerHeading(): Locator {
     return this.page.getByRole('heading', {
-      name: '3. User Responsibilities',
+      name: '3. Disclaimer',
     });
   }
 
-  get productInfoHeading(): Locator {
+  get limitationsHeading(): Locator {
     return this.page.getByRole('heading', {
-      name: '4. Product Information',
+      name: '4. Limitations',
     });
   }
 
-  get pricingHeading(): Locator {
+  get accuracyOfMaterialsHeading(): Locator {
     return this.page.getByRole('heading', {
-      name: '5. Pricing and Payment',
+      name: '5. Accuracy of Materials',
     });
   }
 
-  get shippingHeading(): Locator {
+  get linksHeading(): Locator {
     return this.page.getByRole('heading', {
-      name: '6. Shipping and Delivery',
+      name: '6. Links',
     });
   }
 
-  get returnsHeading(): Locator {
+  get modificationsHeading(): Locator {
     return this.page.getByRole('heading', {
-      name: '7. Returns and Refunds',
-    });
-  }
-
-  get limitationHeading(): Locator {
-    return this.page.getByRole('heading', {
-      name: '8. Limitation of Liability',
+      name: '7. Modifications',
     });
   }
 
   get governingLawHeading(): Locator {
     return this.page.getByRole('heading', {
-      name: '9. Governing Law',
+      name: '8. Governing Law',
+    });
+  }
+
+  get productReturnsHeading(): Locator {
+    return this.page.getByRole('heading', {
+      name: '9. Product Returns',
     });
   }
 
