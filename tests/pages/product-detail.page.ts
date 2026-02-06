@@ -18,7 +18,7 @@ export class ProductDetailPage extends BasePage {
   }
 
   get productPrice(): Locator {
-    return this.page.getByText(/^\$[\d,]+\.\d{2}$/);
+    return this.page.getByTestId('product-price');
   }
 
   get productDescription(): Locator {
@@ -97,7 +97,7 @@ export class ProductDetailPage extends BasePage {
   // ── Customer Reviews ──────────────────────────────────────────────
 
   get reviewsRegion(): Locator {
-    return this.page.getByRole('region', { name: 'Customer Reviews' });
+    return this.page.getByTestId('product-reviews-section');
   }
 
   get reviewArticles(): Locator {

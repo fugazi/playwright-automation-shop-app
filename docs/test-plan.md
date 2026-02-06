@@ -492,6 +492,29 @@ Build a lean, fast-running smoke test suite covering the most critical user path
 - No flaky tests (run 3x without failures)
 - Tests are tagged and executable via `npx playwright test --grep @smoke`
 
+### Completion Log
+
+| # | Deliverable | File | Result |
+|---|-------------|------|--------|
+| 1 | `login.spec.ts` — 5 login tests: customer login, admin login, quick-login buttons, invalid credentials error, guest redirect | `tests/e2e/auth/login.spec.ts` | Done |
+| 2 | `product-catalog.spec.ts` — 3 catalog tests: product count per page, category filter, pagination navigation | `tests/e2e/products/product-catalog.spec.ts` | Done |
+| 3 | `product-detail.spec.ts` — 3 detail tests: name/price/image load, quantity selector, specs & reviews display | `tests/e2e/product-detail/product-detail.spec.ts` | Done |
+| 4 | `add-to-cart.spec.ts` — 3 cart tests: add from detail, add with increased quantity, cart shows items | `tests/e2e/cart/add-to-cart.spec.ts` | Done |
+| 5 | `main-navigation.spec.ts` — 4 navigation tests: header links, footer links, theme toggle, homepage CTAs | `tests/e2e/navigation/main-navigation.spec.ts` | Done |
+| 6 | `contact-form.spec.ts` — 2 contact tests: valid submission, validation errors on empty fields | `tests/e2e/contact/contact-form.spec.ts` | Done |
+
+**POM & Data Corrections During Stabilization:**
+- `ProductsPage` — product cards changed from `getByRole('article')` to `locator('[data-testid^="product-card-"]')`; category/sort filters from `selectOption` to click+option pattern; pagination from role-based to `getByTestId` pattern.
+- `ProductDetailPage` — reviews region from `getByRole('region')` to `getByTestId('product-reviews-section')`; price from regex `getByText` to `getByTestId('product-price')`.
+- `HomePage` — removed non-existent `shopNowLink`/`exploreDealsLink`; added `startShoppingLink`/`browseProductsLink`.
+- `products.data.ts` — corrected all 10 product IDs to match actual app catalog.
+- `categories.data.ts` — corrected category counts: Electronics=5, Photography=4, Accessories=6, Synthesizers=15, Studio Recording=20.
+
+**Verification:**
+- `npx playwright test --project=chromium --grep @smoke` — 22 passed (11.1s).
+- `npx playwright test --grep @smoke` — 62 passed (41.2s) across chromium, firefox, and webkit.
+- 20 smoke tests + 2 auth setup = 22 per browser × 3 browsers = 62 total, all green.
+
 ---
 
 ## Phase 5 — Extended Regression Test Suite

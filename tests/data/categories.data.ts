@@ -10,11 +10,11 @@ export interface CategoryData {
 }
 
 export const CATEGORIES: CategoryData[] = [
-  { label: 'Electronics', expectedCount: 8 },
-  { label: 'Photography', expectedCount: 5 },
+  { label: 'Electronics', expectedCount: 5 },
+  { label: 'Photography', expectedCount: 4 },
   { label: 'Accessories', expectedCount: 6 },
   { label: 'Synthesizers', expectedCount: 15 },
-  { label: 'Studio Recording', expectedCount: 16 },
+  { label: 'Studio Recording', expectedCount: 20 },
 ] as const;
 
 /** All category labels as a simple array. */

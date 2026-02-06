@@ -17,12 +17,12 @@ export class HomePage extends BasePage {
     return this.page.getByRole('heading', { name: 'Music-Tech Shop', level: 1 });
   }
 
-  get shopNowLink(): Locator {
-    return this.page.getByRole('link', { name: 'Shop Now' });
+  get startShoppingLink(): Locator {
+    return this.page.getByRole('link', { name: 'Start Shopping' });
   }
 
-  get exploreDealsLink(): Locator {
-    return this.page.getByRole('link', { name: 'Explore Deals' });
+  get browseProductsLink(): Locator {
+    return this.page.getByRole('link', { name: 'Browse Products' });
   }
 
   // ── Featured Products ─────────────────────────────────────────────

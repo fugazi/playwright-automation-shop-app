@@ -18,14 +18,14 @@ export interface ProductData {
 
 export const PRODUCTS: Record<string, ProductData> = {
   sdCard: {
-    id: 1,
+    id: 14,
     name: '128GB UHS-II SD Card',
     price: '$39.99',
     category: 'Photography',
     badge: 'Best Seller',
   },
   monitor: {
-    id: 2,
+    id: 5,
     name: '27" 4K UHD Monitor',
     price: '$449.99',
     category: 'Electronics',
@@ -39,39 +39,39 @@ export const PRODUCTS: Record<string, ProductData> = {
     badge: 'Best Seller',
   },
   lens: {
-    id: 4,
+    id: 11,
     name: '50mm f/1.8 Lens',
     price: '$249.99',
     category: 'Photography',
     badge: 'Best Seller',
   },
   usbHub: {
-    id: 5,
+    id: 12,
     name: '7-in-1 USB-C Hub',
     price: '$69.99',
     category: 'Accessories',
   },
   studioMonitors: {
-    id: 6,
+    id: 42,
     name: 'Adam Audio A7X Studio Monitors (Pair)',
     price: '$1,599.99',
     category: 'Studio Recording',
   },
   audioInterface: {
-    id: 7,
+    id: 43,
     name: 'Apogee Duet 3 Audio Interface',
     price: '$649.99',
     category: 'Studio Recording',
   },
   microFreak: {
-    id: 8,
+    id: 21,
     name: 'Arturia MicroFreak',
     price: '$349.99',
     category: 'Synthesizers',
     badge: 'New Arrival',
   },
   condenser: {
-    id: 10,
+    id: 29,
     name: 'Audio-Technica AT2020',
     price: '$99.99',
     category: 'Studio Recording',

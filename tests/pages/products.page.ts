@@ -20,27 +20,29 @@ export class ProductsPage extends BasePage {
   // ── Filters ───────────────────────────────────────────────────────
 
   get categoryFilter(): Locator {
-    return this.page.getByRole('combobox', { name: 'Category' });
+    return this.page.getByTestId('category-filter');
   }
 
   get sortFilter(): Locator {
-    return this.page.getByRole('combobox', { name: 'Sort by' });
+    return this.page.getByTestId('sort-filter');
   }
 
-  /** Select a category by its visible label text. */
+  /** Select a category by clicking the custom dropdown and choosing an option. */
   async selectCategory(category: string): Promise<void> {
-    await this.categoryFilter.selectOption({ label: category });
+    await this.categoryFilter.click();
+    await this.page.getByRole('option', { name: category }).click();
   }
 
-  /** Select a sort option by its visible label text. */
+  /** Select a sort option by clicking the custom dropdown and choosing an option. */
   async selectSort(sort: string): Promise<void> {
-    await this.sortFilter.selectOption({ label: sort });
+    await this.sortFilter.click();
+    await this.page.getByRole('option', { name: sort }).click();
   }
 
   // ── Product Grid ──────────────────────────────────────────────────
 
   get productCards(): Locator {
-    return this.page.getByRole('article');
+    return this.page.locator('[data-testid^="product-card-"]');
   }
 
   /** Get a specific product card by its heading text. */
@@ -63,21 +65,19 @@ export class ProductsPage extends BasePage {
   // ── Pagination ────────────────────────────────────────────────────
 
   get paginationNav(): Locator {
-    return this.page.getByRole('navigation', { name: 'Pagination' });
+    return this.page.getByTestId('pagination-prev').locator('..');
   }
 
   get previousPageButton(): Locator {
-    return this.page.getByRole('button', { name: 'Go to previous page' });
+    return this.page.getByTestId('pagination-prev');
   }
 
   get nextPageButton(): Locator {
-    return this.page.getByRole('button', { name: 'Go to next page' });
+    return this.page.getByTestId('pagination-next');
   }
 
   /** Navigate to a specific page number. */
   async goToPage(pageNumber: number): Promise<void> {
-    await this.page
-      .getByRole('button', { name: `Go to page ${pageNumber}` })
-      .click();
+    await this.page.getByTestId(`pagination-page-${pageNumber}`).click();
   }
 }
