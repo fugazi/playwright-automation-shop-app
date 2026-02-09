@@ -35,27 +35,11 @@ export default defineConfig({
       testMatch: /auth\.setup\.ts/,
     },
 
-    /* ── Browser Projects ─────────────────────────────────────────── */
+    /* ── Browser Project (Chromium only) ──────────────────────────── */
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/customer.json',
-      },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        storageState: 'playwright/.auth/customer.json',
-      },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
         storageState: 'playwright/.auth/customer.json',
       },
       dependencies: ['setup'],

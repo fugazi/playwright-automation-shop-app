@@ -28,7 +28,6 @@ test.describe('Search Functionality @regression', () => {
 
       await test.step('Verify navigation to products page with results', async () => {
         await expect(page).toHaveURL(/\/products/);
-        await page.waitForLoadState('networkidle');
       });
 
       await test.step('Verify the searched product appears in results', async () => {
@@ -54,7 +53,6 @@ test.describe('Search Functionality @regression', () => {
 
       await test.step('Verify products page loads', async () => {
         await expect(page).toHaveURL(/\/products/);
-        await page.waitForLoadState('networkidle');
       });
 
       await test.step('Verify at least one result is displayed', async () => {
@@ -142,7 +140,6 @@ test.describe('Search Functionality @regression', () => {
 
       await test.step('Verify products page loads with results', async () => {
         await expect(page).toHaveURL(/\/products/);
-        await page.waitForLoadState('networkidle');
         await expect(productsPage.productCards.first()).toBeVisible({
           timeout: 10_000,
         });

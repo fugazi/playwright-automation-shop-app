@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:chromium": "playwright test --project=chromium",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report"

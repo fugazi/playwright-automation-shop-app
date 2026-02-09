@@ -14,7 +14,6 @@ test.describe('Cart & Orders — Extended @regression', () => {
       const product = PRODUCTS.condenser;
 
       await test.step('Navigate to cart page', async () => {
-        await cartWithProduct.waitForLoadState('networkidle');
         await cartPage.goto();
       });
 
@@ -42,10 +41,12 @@ test.describe('Cart & Orders — Extended @regression', () => {
         await detailPage.goto(product.id);
         await detailPage.increaseQuantityButton.click();
         await detailPage.addToCartButton.click();
+        await expect(detailPage.notificationsRegion).toContainText(
+          /added to cart/i,
+        );
       });
 
       await test.step('Navigate to cart', async () => {
-        await cartWithProduct.waitForLoadState('networkidle');
         await cartPage.goto();
       });
 
@@ -65,7 +66,6 @@ test.describe('Cart & Orders — Extended @regression', () => {
       const product = PRODUCTS.condenser;
 
       await test.step('Navigate to cart', async () => {
-        await cartWithProduct.waitForLoadState('networkidle');
         await cartPage.goto();
       });
 
@@ -92,7 +92,6 @@ test.describe('Cart & Orders — Extended @regression', () => {
       const cartPage = new CartPage(cartWithProduct);
 
       await test.step('Navigate to cart', async () => {
-        await cartWithProduct.waitForLoadState('networkidle');
         await cartPage.goto();
       });
 
@@ -181,7 +180,6 @@ test.describe('Cart & Orders — Extended @regression', () => {
       });
 
       await test.step('Navigate to second product and add to cart', async () => {
-        await page.waitForLoadState('networkidle');
         await detailPage.goto(product2.id);
         await detailPage.addToCartButton.click();
         await expect(detailPage.notificationsRegion).toContainText(
@@ -190,7 +188,6 @@ test.describe('Cart & Orders — Extended @regression', () => {
       });
 
       await test.step('Navigate to cart page', async () => {
-        await page.waitForLoadState('networkidle');
         await cartPage.goto();
       });
 
@@ -254,7 +251,6 @@ test.describe('Cart & Orders — Extended @regression', () => {
       const cartPage = new CartPage(cartWithProduct);
 
       await test.step('Navigate to cart', async () => {
-        await cartWithProduct.waitForLoadState('networkidle');
         await cartPage.goto();
       });
 
@@ -271,7 +267,6 @@ test.describe('Cart & Orders — Extended @regression', () => {
       const cartPage = new CartPage(cartWithProduct);
 
       await test.step('Navigate to cart', async () => {
-        await cartWithProduct.waitForLoadState('networkidle');
         await cartPage.goto();
       });
 

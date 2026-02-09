@@ -1,4 +1,4 @@
-import { test as base, type Page } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 import { AUTH_STATE } from '../data/users.data';
 import { PRODUCTS } from '../data/products.data';
 import { ProductDetailPage, CartPage } from '../pages';
@@ -26,6 +26,11 @@ export const cartTest = base.extend<CartFixtures>({
     const detailPage = new ProductDetailPage(page);
     await detailPage.goto(PRODUCTS.condenser.id);
     await detailPage.addToCartButton.click();
+
+    // Wait for the add-to-cart notification before yielding
+    await expect(detailPage.notificationsRegion).toContainText(
+      /added to cart/i,
+    );
 
     await use(page);
     await context.close();
