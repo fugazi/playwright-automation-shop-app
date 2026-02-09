@@ -179,6 +179,8 @@ npx playwright test auth.setup
 ## 📖 Documentation
 
 - [Full Test Plan](docs/test-plan.md) — Detailed strategy and phasing.
+- [CLAUDE.md](CLAUDE.md) — AI assistant guide for working with this codebase.
+- [AGENTS.md](AGENTS.md) — AI assistant guide for working with this codebase.
 
 ---
 
