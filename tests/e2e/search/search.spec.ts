@@ -1,6 +1,5 @@
 import { test, expect } from '../../fixtures/test-base';
 import { PRODUCTS, CATALOG } from '../../data/products.data';
-import { ProductsPage } from '../../pages';
 
 // ── Search Test Constants ───────────────────────────────────────────
 
@@ -14,9 +13,9 @@ test.describe('Search Functionality @regression', () => {
   test.describe('Header Search', () => {
     test('Search for a known product by name navigates to results', async ({
       homePage,
+      productsPage,
       page,
     }) => {
-      const productsPage = new ProductsPage(page);
 
       await test.step('Navigate to home page', async () => {
         await homePage.goto();
@@ -39,9 +38,9 @@ test.describe('Search Functionality @regression', () => {
 
     test('Search for a partial product name returns results', async ({
       homePage,
+      productsPage,
       page,
     }) => {
-      const productsPage = new ProductsPage(page);
 
       await test.step('Navigate to home page', async () => {
         await homePage.goto();
@@ -126,9 +125,9 @@ test.describe('Search Functionality @regression', () => {
   test.describe('Search by Category Name', () => {
     test(`Search for category "${CATEGORY_SEARCH_TERM}" returns relevant results`, async ({
       homePage,
+      productsPage,
       page,
     }) => {
-      const productsPage = new ProductsPage(page);
 
       await test.step('Navigate to home page', async () => {
         await homePage.goto();

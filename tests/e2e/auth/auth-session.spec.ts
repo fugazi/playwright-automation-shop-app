@@ -4,12 +4,10 @@ import {
   CUSTOMER_USER,
   INVALID_USERS,
 } from '../../data/users.data';
-import { LoginPage, HomePage, CartPage, OrdersPage } from '../../pages';
 
 test.describe('Authentication & Session Management @regression', () => {
   test.describe('Session Persistence', () => {
     test('Customer session persists across page navigations', async ({
-      page,
       homePage,
       productsPage,
       contactPage,
@@ -39,22 +37,20 @@ test.describe('Authentication & Session Management @regression', () => {
     });
 
     test('Admin session persists across page navigations', async ({
-      adminPage,
+      adminHomePage,
+      adminCartPage,
     }) => {
-      const homePage = new HomePage(adminPage);
-      const cartPage = new CartPage(adminPage);
-
       await test.step('Navigate to home page as admin', async () => {
-        await homePage.goto();
+        await adminHomePage.goto();
       });
 
       await test.step('Verify admin user menu is visible', async () => {
-        await expect(homePage.header.userMenuButton).toBeVisible();
+        await expect(adminHomePage.header.userMenuButton).toBeVisible();
       });
 
       await test.step('Navigate to cart and verify session', async () => {
-        await cartPage.goto();
-        await expect(cartPage.header.userMenuButton).toBeVisible();
+        await adminCartPage.goto();
+        await expect(adminCartPage.header.userMenuButton).toBeVisible();
       });
     });
   });
@@ -84,10 +80,9 @@ test.describe('Authentication & Session Management @regression', () => {
     test.use({ storageState: { cookies: [], origins: [] } });
 
     test('Unauthenticated user accessing /orders is redirected to login', async ({
+      ordersPage,
       page,
     }) => {
-      const ordersPage = new OrdersPage(page);
-
       await test.step('Navigate to /orders without auth', async () => {
         await ordersPage.goto();
       });
@@ -98,10 +93,9 @@ test.describe('Authentication & Session Management @regression', () => {
     });
 
     test('Unauthenticated user accessing /cart sees login or empty state', async ({
+      cartPage,
       page,
     }) => {
-      const cartPage = new CartPage(page);
-
       await test.step('Navigate to /cart without auth', async () => {
         await cartPage.goto();
       });
@@ -119,9 +113,7 @@ test.describe('Authentication & Session Management @regression', () => {
   });
 
   test.describe('Role Differences', () => {
-    test('Customer can view order history page', async ({ page }) => {
-      const ordersPage = new OrdersPage(page);
-
+    test('Customer can view order history page', async ({ ordersPage }) => {
       await test.step('Navigate to orders page as customer', async () => {
         await ordersPage.goto();
       });
@@ -131,15 +123,13 @@ test.describe('Authentication & Session Management @regression', () => {
       });
     });
 
-    test('Admin can view order history page', async ({ adminPage }) => {
-      const ordersPage = new OrdersPage(adminPage);
-
+    test('Admin can view order history page', async ({ adminOrdersPage }) => {
       await test.step('Navigate to orders page as admin', async () => {
-        await ordersPage.goto();
+        await adminOrdersPage.goto();
       });
 
       await test.step('Verify orders page heading is visible', async () => {
-        await expect(ordersPage.orderHistoryHeading).toBeVisible();
+        await expect(adminOrdersPage.orderHistoryHeading).toBeVisible();
       });
     });
   });
@@ -147,9 +137,7 @@ test.describe('Authentication & Session Management @regression', () => {
   test.describe('Login Negative Scenarios', () => {
     test.use({ storageState: { cookies: [], origins: [] } });
 
-    test('Empty fields show validation error', async ({ page }) => {
-      const loginPage = new LoginPage(page);
-
+    test('Empty fields show validation error', async ({ loginPage, page }) => {
       await test.step('Navigate to login page', async () => {
         await loginPage.goto();
       });
@@ -165,9 +153,7 @@ test.describe('Authentication & Session Management @regression', () => {
       });
     });
 
-    test('Invalid email format shows error', async ({ page }) => {
-      const loginPage = new LoginPage(page);
-
+    test('Invalid email format shows error', async ({ loginPage }) => {
       await test.step('Navigate to login page', async () => {
         await loginPage.goto();
       });
@@ -186,9 +172,7 @@ test.describe('Authentication & Session Management @regression', () => {
       });
     });
 
-    test('SQL injection payload is handled safely', async ({ page }) => {
-      const loginPage = new LoginPage(page);
-
+    test('SQL injection payload is handled safely', async ({ loginPage }) => {
       await test.step('Navigate to login page', async () => {
         await loginPage.goto();
       });
@@ -206,9 +190,7 @@ test.describe('Authentication & Session Management @regression', () => {
       });
     });
 
-    test('XSS payload is handled safely', async ({ page }) => {
-      const loginPage = new LoginPage(page);
-
+    test('XSS payload is handled safely', async ({ loginPage }) => {
       await test.step('Navigate to login page', async () => {
         await loginPage.goto();
       });
