@@ -5,12 +5,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Setup
+
 ```bash
 pnpm install                                    # Install dependencies
 npx playwright install --with-deps chromium     # Install Chromium browser
 ```
 
 ### Running Tests
+
 ```bash
 pnpm test                    # All tests (headless)
 pnpm run test:smoke          # Critical path tests (@smoke tag)
@@ -21,6 +23,7 @@ pnpm run test:report         # Open HTML test report
 ```
 
 ### Development
+
 ```bash
 npx playwright test --list   # List all tests with titles
 npx playwright test --grep "@tag"  # Run tests matching a pattern
@@ -30,9 +33,11 @@ npx playwright test auth.setup    # Regenerate auth storage states
 ## Architecture
 
 ### Project Overview
+
 Music-Tech Shop is a Playwright + TypeScript automation framework for an e-commerce application at https://music-tech-shop.vercel.app. The framework follows the Page Object Model (POM) pattern with feature-based test organization.
 
 ### Test Organization
+
 - **`tests/e2e/`** — Feature-based test suites (auth, products, cart, navigation, etc.)
 - **`tests/pages/`** — Page Object Model classes
 - **`tests/fixtures/`** — Custom Playwright fixtures (auth, pages, cart)
@@ -40,22 +45,27 @@ Music-Tech Shop is a Playwright + TypeScript automation framework for an e-comme
 - **`tests/helpers/`** — Utility functions (validation, price formatting, pagination)
 
 ### Page Object Model Pattern
+
 All page objects extend `BasePage` which composes `HeaderComponent` and `FooterComponent`. Page objects follow a fluent interface pattern (methods return `this` for chaining). Locators are role-based only (`getByRole`, `getByLabel`, `getByText`) for accessibility.
 
 Key page objects: `HomePage`, `ProductsPage`, `ProductDetailPage`, `CartPage`, `OrdersPage`, `ContactPage`, `LoginPage`, `ShippingPage`, `AboutPage`, `ReturnsPage`, `TermsPage`, `ApiTestPage`.
 
 ### Fixture System
+
 The framework uses `mergeTests` to combine multiple fixture sets:
+
 - **`pages.fixture.ts`** — Pre-instantiated page objects (e.g., `homePage`, `productsPage`)
 - **`auth.fixture.ts`** — Pre-authenticated pages (`adminPage`, `customerPage`)
 - **`cart.fixture.ts`** — Cart-specific fixtures (e.g., `cartWithProduct`)
 
 Import from `tests/fixtures/test-base.ts` to access all fixtures:
+
 ```typescript
-import { test, expect } from '../fixtures/test-base';
+import { test, expect } from "../fixtures/test-base";
 ```
 
 ### Authentication Strategy
+
 - Primary: `storageState` in `playwright.config.ts` pre-authenticates all tests in a project
 - Default project uses `playwright/.auth/customer.json`
 - Per-test fixtures (`adminPage`, `customerPage`) available for role-specific needs
@@ -64,6 +74,7 @@ import { test, expect } from '../fixtures/test-base';
   - Customer: `user@test.com` / `user123`
 
 ### Configuration Notes
+
 - **Browser:** Chromium only (for speed and consistency)
 - **Workers:** 4 local, 2 in CI
 - **Retries:** 2 in CI, 0 locally
@@ -71,18 +82,304 @@ import { test, expect } from '../fixtures/test-base';
 - **Base URL:** `https://music-tech-shop.vercel.app` (override via `BASE_URL` env var)
 
 ### Test Data Pattern
+
 Test data is externalized in `tests/data/` with TypeScript interfaces:
+
 - `users.data.ts` — Credentials (valid/invalid), auth state paths
 - `products.data.ts` — 50 products across 5 categories
 - `contact.data.ts` — Form payloads for validation testing
 - `shipping.data.ts` — ZIP codes for shipping calculator
+- `categories.data.ts` — Category labels and expected product counts
 
 ### Test Tagging
+
 - `@smoke` — 22 critical path tests for quick validation
 - `@regression` — 117 comprehensive tests
 - Run specific tags via `--grep @tag`
 
 ### Known Gaps
+
 - No user registration flow (app uses pre-configured accounts only)
 - No checkout route in current application version
 - No real payment processing (demo platform)
+
+---
+
+## Constitution — Test Orchestration Pattern
+
+The non-negotiable rules that govern all test code in this repository.
+
+### MUST DO
+
+1. **DI via fixtures** — All POMs are injected through `tests/fixtures/test-base.ts`. Specs never import POM classes directly for instantiation.
+
+   ```typescript
+   // ✅ CORRECT
+   import { test, expect } from '../../fixtures/test-base';
+   test('example', async ({ homePage, productsPage }) => { ... });
+
+   // ❌ FORBIDDEN
+   import { HomePage } from '../pages';
+   const homePage = new HomePage(page);
+   ```
+
+2. **Strict imports** — Every spec imports `test` and `expect` from `../fixtures/test-base` only. No `import { test } from '@playwright/test'` in spec files.
+
+3. **Selector priority** — When adding or modifying locators, follow this order:
+   - `getByRole()` → `getByLabel()` → `getByPlaceholder()` → `getByTestId()` → CSS
+   - Prefer semantic selectors over implementation details.
+   - `getByTestId()` is acceptable for paginated/dynamic lists (e.g., `product-card-{{id}}`).
+
+4. **Type safety** — All test data uses TypeScript interfaces defined in `tests/data/`. No `any` types in specs, POMs, or fixtures.
+
+5. **Explore first** — Before writing or modifying a test, read the existing POM, fixture, and test data to understand what's available. Never duplicate locators or data that already exist.
+
+6. **Test structure** — All assertions wrapped in `test.step()` with descriptive names. Every test tells a story.
+
+7. **Fluent POMs** — Page objects return `this` from navigation/action methods to enable chaining:
+   ```typescript
+   await homePage.goto().header.productsLink.click();
+   ```
+
+### WON'T DO
+
+1. **No XPath** — Never use `page.locator('//...')` or XPath selectors.
+2. **No hard waits** — No `page.waitForTimeout()`. No `waitForLoadState('networkidle')` unless the application genuinely has no network indicator. Use `waitForResponse()`, `waitForSelector()`, or assertion-based waits instead.
+3. **No loose schemas** — Assertions must be specific. No `toBeVisible()` as a proxy for "page loaded" when a more precise assertion exists.
+4. **No fake exploration** — Every test must verify real behavior. No stub assertions that pass regardless.
+5. **No hardcoded data in specs** — Product names, URLs, credentials — all come from `tests/data/`.
+6. **No cross-POM imports in specs** — Specs receive POMs via DI. They never `import { CartPage } from '../pages'` to instantiate manually.
+7. **No magic numbers** — Use constants from test data files, not raw numbers like `expect(items).toHaveCount(16)`. Use `expect(items).toHaveCount(CATALOG.page1Count)`.
+
+---
+
+## Workflow — 8 Steps
+
+Follow this workflow when creating or modifying tests:
+
+### 1. Initialize
+
+Read this CLAUDE.md and understand the project conventions.
+
+### 2. Explore
+
+Before writing anything:
+
+- Read the relevant POM in `tests/pages/`
+- Read the fixture definitions in `tests/fixtures/`
+- Read the test data in `tests/data/`
+- Check if a similar test already exists in `tests/e2e/`
+
+### 3. Plan
+
+Identify which POMs, fixtures, and data you need. Map out the test steps with `test.step()` names.
+
+### 4. Generate
+
+Write the test using DI fixtures, externalized data, and role-based selectors.
+
+### 5. Implement
+
+If the POM lacks a needed locator or method, add it to the POM first. Then update the fixture if a new POM is needed.
+
+### 6. Review
+
+Verify:
+
+- [ ] Imports from `test-base` only (no `@playwright/test` in specs)
+- [ ] No manual `new PageObject(page)` in specs
+- [ ] All assertions in `test.step()` blocks
+- [ ] Data from `tests/data/`, not hardcoded
+- [ ] Selectors follow priority: role > label > placeholder > testid > CSS
+
+### 7. Refactor
+
+Remove duplication. Extract shared setup to fixtures. Move repeated locators to POMs.
+
+### 8. Run Tests
+
+```bash
+pnpm test                           # Full suite
+pnpm run test:smoke                 # Quick validation
+npx playwright test <file>.spec.ts  # Single file
+```
+
+All tests must pass before submitting.
+
+---
+
+## File Map
+
+Quick reference for where things live and what they do.
+
+```
+tests/
+├── e2e/                          # Test suites organized by feature
+│   ├── auth/                     #   Authentication (login, sessions)
+│   ├── cart/                     #   Shopping cart (add, update, orders)
+│   ├── contact/                  #   Contact form (valid, negative)
+│   ├── navigation/               #   Navigation (main, accessibility, 404, info pages)
+│   ├── product-detail/           #   Product detail page
+│   ├── products/                 #   Product catalog (basic, extended)
+│   └── search/                   #   Search functionality
+├── pages/                        # Page Object Model classes
+│   ├── index.ts                  #   Barrel exports
+│   ├── base.page.ts              #   BasePage (header, footer, navigateTo)
+│   ├── header.component.ts       #   HeaderComponent (nav, theme, search)
+│   ├── footer.component.ts       #   FooterComponent (links, copyright)
+│   ├── home.page.ts              #   Home (/)
+│   ├── login.page.ts             #   Login (/login)
+│   ├── products.page.ts          #   Products listing (/products)
+│   ├── product-detail.page.ts    #   Product detail (/products/:id)
+│   ├── cart.page.ts              #   Cart (/cart)
+│   ├── orders.page.ts            #   Orders (/orders)
+│   ├── contact.page.ts           #   Contact (/contact)
+│   ├── shipping.page.ts          #   Shipping (/shipping)
+│   ├── about.page.ts             #   About (/about)
+│   ├── returns.page.ts           #   Returns (/returns)
+│   ├── terms.page.ts             #   Terms (/terms)
+│   └── api-test.page.ts          #   API Console (/api-test)
+├── fixtures/                     # Custom Playwright fixtures
+│   ├── test-base.ts              #   Merged test export (use this in specs)
+│   ├── pages.fixture.ts          #   POM fixtures (homePage, productsPage, etc.)
+│   ├── auth.fixture.ts           #   Auth fixtures (adminPage, customerPage)
+│   └── cart.fixture.ts           #   Cart fixture (cartWithProduct)
+├── data/                         # Externalized test data
+│   ├── users.data.ts             #   Credentials, auth state paths
+│   ├── products.data.ts          #   Products (50 items, 5 categories)
+│   ├── categories.data.ts        #   Category labels + expected counts
+│   ├── contact.data.ts           #   Contact form payloads
+│   └── shipping.data.ts          #   Shipping ZIP codes
+├── helpers/                      # Utility functions
+│   ├── validation.helper.ts      #   Form validation helpers
+│   ├── price.helper.ts           #   Price parsing and format validation
+│   └── pagination.helper.ts      #   Pagination utilities
+├── auth.setup.ts                 #   Storage state generator (admin + customer)
+└── seed.spec.ts                  #   Smoke test seed placeholder
+```
+
+---
+
+## Skills Index
+
+Domain-specific knowledge loaded on demand.
+
+| Skill                 | File                                                         | When to Load                                                   |
+| --------------------- | ------------------------------------------------------------ | -------------------------------------------------------------- |
+| Playwright CLI        | `.github/skills/playwright-cli/SKILL.md`                     | Browser automation, code generation, tracing                   |
+| QA Test Planner       | `.github/skills/qa-test-planner/SKILL.md`                    | Writing test cases, bug reports, regression planning           |
+| Web App Testing       | `.github/skills/webapp-testing/SKILL.md`                     | API testing, locator strategies, POM patterns, common patterns |
+| Accessibility         | `.github/instructions/a11y.instructions.md`                  | WCAG compliance, axe-core checks                               |
+| Agent Skills          | `.github/instructions/agent-skills.instructions.md`          | Agent interaction patterns                                     |
+| Playwright TypeScript | `.github/instructions/playwright-typescript.instructions.md` | TS-specific Playwright patterns                                |
+
+---
+
+## Code Patterns
+
+### Spec template
+
+```typescript
+import { test, expect } from "../../fixtures/test-base";
+import { PRODUCT_DATA } from "../../data/products.data";
+
+test.describe("Feature Name @tag", () => {
+  test.beforeEach(async ({ relevantPage }) => {
+    await relevantPage.goto();
+  });
+
+  test("Test description", async ({ relevantPage, page }) => {
+    await test.step("Step 1 description", async () => {
+      await expect(relevantPage.someElement).toBeVisible();
+    });
+
+    await test.step("Step 2 description", async () => {
+      await relevantPage.someAction();
+      await expect(page).toHaveURL("/expected-path");
+    });
+  });
+});
+```
+
+### POM template
+
+```typescript
+import { type Locator } from "@playwright/test";
+import { BasePage } from "./base.page";
+
+export class ExamplePage extends BasePage {
+  // ── Navigation ────────────────────────────────────────────────────
+
+  async goto(): Promise<this> {
+    return this.navigateTo("/example");
+  }
+
+  // ── Locators (role-based) ─────────────────────────────────────────
+
+  get someButton(): Locator {
+    return this.page.getByRole("button", { name: "Submit" });
+  }
+
+  get someInput(): Locator {
+    return this.page.getByLabel("Email address");
+  }
+
+  // ── Actions (fluent) ──────────────────────────────────────────────
+
+  async submitForm(data: string): Promise<void> {
+    await this.someInput.fill(data);
+    await this.someButton.click();
+  }
+}
+```
+
+### Fixture extension template
+
+```typescript
+// When adding new fixtures, extend the appropriate fixture file
+// then merge in test-base.ts
+
+import { test as base } from "@playwright/test";
+import { NewPage } from "../pages";
+
+export type NewFixtures = {
+  newPage: NewPage;
+};
+
+export const newTest = base.extend<NewFixtures>({
+  newPage: async ({ page }, use) => {
+    await use(new NewPage(page));
+  },
+});
+```
+
+### Using auth-scoped POMs
+
+```typescript
+// When a test needs a POM on an authenticated page:
+test("admin action", async ({ adminPage }) => {
+  const homePage = new HomePage(adminPage); // Currently necessary
+  // TODO: Future fixture should provide adminHomePage directly
+});
+```
+
+### Test data pattern
+
+```typescript
+// tests/data/example.data.ts
+export interface ProductData {
+  id: string;
+  name: string;
+  price: string;
+  category: string;
+}
+
+export const PRODUCTS: Record<string, ProductData> = {
+  microFreak: {
+    id: "product-1",
+    name: "Arturia MicroFreak",
+    price: "$349.00",
+    category: "Synthesizers",
+  },
+};
+```
