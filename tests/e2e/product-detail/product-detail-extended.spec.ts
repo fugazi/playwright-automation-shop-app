@@ -81,12 +81,12 @@ test.describe('Product Detail — Extended @regression', () => {
       });
     });
 
-    test('Twitter share button is visible', async ({
+    test('X share button is visible', async ({
       productDetailPage,
     }) => {
-      await test.step('Verify Twitter share button', async () => {
+      await test.step('Verify X share button', async () => {
         await expect(
-          productDetailPage.shareTwitterButton,
+          productDetailPage.shareXButton,
         ).toBeVisible();
       });
     });

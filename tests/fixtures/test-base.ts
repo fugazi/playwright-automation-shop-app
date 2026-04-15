@@ -11,11 +11,14 @@ import { cartTest, type CartFixtures } from './cart.fixture';
  *   import { test, expect } from '../fixtures/test-base';
  *
  * Available fixtures:
- *   - Page Objects:   homePage, loginPage, productsPage, productDetailPage,
- *                     cartPage, ordersPage, contactPage, shippingPage,
- *                     aboutPage, returnsPage, termsPage, apiTestPage
- *   - Auth:           adminPage, customerPage
- *   - Cart:           cartWithProduct
+ *   - Page Objects:     homePage, loginPage, productsPage, productDetailPage,
+ *                       cartPage, ordersPage, contactPage, shippingPage,
+ *                       aboutPage, returnsPage, termsPage, apiTestPage
+ *   - Auth (raw Page):  adminPage, customerPage
+ *   - Auth (POM):       adminHomePage, customerHomePage, adminCartPage,
+ *                       adminOrdersPage, customerOrdersPage
+ *   - Cart:             cartWithProduct, cartPageWithProduct,
+ *                       productDetailPageWithProduct
  */
 
 export const test = mergeTests(authTest, pagesTest, cartTest);

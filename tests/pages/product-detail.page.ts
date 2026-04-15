@@ -78,8 +78,8 @@ export class ProductDetailPage extends BasePage {
     return this.page.getByRole('button', { name: 'Share on Facebook' });
   }
 
-  get shareTwitterButton(): Locator {
-    return this.page.getByRole('button', { name: 'Share on Twitter' });
+  get shareXButton(): Locator {
+    return this.page.getByRole('button', { name: 'Share on X' });
   }
 
   get shareLinkedInButton(): Locator {

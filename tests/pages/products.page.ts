@@ -19,16 +19,18 @@ export class ProductsPage extends BasePage {
 
   /** Fill the search box and press Enter to filter products. */
   async searchProducts(query: string): Promise<void> {
+    const responsePromise = this.page.waitForResponse(
+      resp => resp.url().includes('/api/products'),
+    );
     await this.searchInput.fill(query);
     await this.searchInput.press('Enter');
-    await this.page.waitForLoadState('networkidle');
+    await responsePromise;
   }
 
   /** Clear the search box and press Enter to reset filtering. */
   async clearSearch(): Promise<void> {
     await this.searchInput.clear();
     await this.searchInput.press('Enter');
-    await this.page.waitForLoadState('networkidle');
   }
 
   // ── Filters ───────────────────────────────────────────────────────
