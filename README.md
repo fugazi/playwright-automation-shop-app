@@ -197,7 +197,7 @@ npx playwright test auth.setup
 * Job: `SDET - Software Developer Engineer in Test`
 * Country: `Colombia`
 * City: `Medellin`
-* E-mail: `douglas@douglasfugazi.co`
+* E-mail: `info@douglasfugazi.co`
 * LinkedIn: [https://www.linkedin.com/in/douglasfugazi](https://www.linkedin.com/in/douglasfugazi)
 * Contact: [https://douglasfugazi.co](https://douglasfugazi.co)
 
