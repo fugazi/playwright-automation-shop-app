@@ -4,7 +4,7 @@ This document provides essential information for AI coding agents working in thi
 
 ## Project Overview
 
-- **Framework**: Playwright v1.58.2 with TypeScript
+- **Framework**: Playwright v1.59.1 with TypeScript
 - **Package Manager**: pnpm (v10.28.2)
 - **Target Application**: https://music-tech-shop.vercel.app
 - **Test Directory**: `./tests`
@@ -117,8 +117,8 @@ test.describe('Feature Name @smoke', () => {
 - Use `toHaveURL()` for navigation verification
 
 ### Test Tags
-- `@smoke` - Critical path tests (22 tests)
-- `@regression` - Full test suite (117 tests)
+- `@smoke` - Critical path tests (20 tests)
+- `@regression` - Full test suite (121 tests)
 - `@a11y` - Accessibility tests (14 tests)
 
 ### Error Handling

@@ -93,8 +93,8 @@ Test data is externalized in `tests/data/` with TypeScript interfaces:
 
 ### Test Tagging
 
-- `@smoke` — 22 critical path tests for quick validation
-- `@regression` — 117 comprehensive tests
+- `@smoke` — 20 critical path tests for quick validation
+- `@regression` — 121 comprehensive tests
 - Run specific tags via `--grep @tag`
 
 ### Known Gaps
@@ -215,6 +215,7 @@ Quick reference for where things live and what they do.
 ```
 tests/
 ├── e2e/                          # Test suites organized by feature
+│   ├── api-console/              #   API Testing Console (/api-test page)
 │   ├── auth/                     #   Authentication (login, sessions)
 │   ├── cart/                     #   Shopping cart (add, update, orders)
 │   ├── contact/                  #   Contact form (valid, negative)
