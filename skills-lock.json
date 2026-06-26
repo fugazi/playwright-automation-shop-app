@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "grill-me-qa": {
+      "source": "fugazi/test-automation-skills-agents",
+      "sourceType": "github",
+      "skillPath": "skills/grill-me-qa/SKILL.md",
+      "computedHash": "d6986342f03f78177b2df79fbb36cdaf24ede374091f8ee77739e37927409f94"
+    }
+  }
+}
