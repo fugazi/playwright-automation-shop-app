@@ -2,6 +2,8 @@ import { test, expect } from '../../fixtures/test-base';
 import { PRODUCTS } from '../../data/products.data';
 
 test.describe('Add to Cart @smoke', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test('Add product to cart from product detail page', async ({
     productDetailPage,
     cartPage,

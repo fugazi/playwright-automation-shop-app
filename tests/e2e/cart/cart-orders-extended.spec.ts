@@ -3,6 +3,8 @@ import { PRODUCTS } from '../../data/products.data';
 import { parsePrice, isValidPriceFormat } from '../../helpers/price.helper';
 
 test.describe('Cart & Orders — Extended @regression', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test.describe('Update Quantity in Cart', () => {
     test('Increase product quantity in cart', async ({ cartPageWithProduct }) => {
       const product = PRODUCTS.condenser;
@@ -111,13 +113,7 @@ test.describe('Cart & Orders — Extended @regression', () => {
       });
 
       await test.step('Remove all items if any exist', async () => {
-        const itemCount = await cartPage.cartItems.count();
-        for (let i = 0; i < itemCount; i++) {
-          await cartPage.page
-            .getByRole('button', { name: /Remove .+ from cart/ })
-            .first()
-            .click();
-        }
+        await cartPage.clearCart();
       });
 
       await test.step('Verify empty cart heading is visible', async () => {
@@ -135,13 +131,7 @@ test.describe('Cart & Orders — Extended @regression', () => {
     }) => {
       await test.step('Navigate to cart and ensure empty', async () => {
         await cartPage.goto();
-        const itemCount = await cartPage.cartItems.count();
-        for (let i = 0; i < itemCount; i++) {
-          await cartPage.page
-            .getByRole('button', { name: /Remove .+ from cart/ })
-            .first()
-            .click();
-        }
+        await cartPage.clearCart();
       });
 
       await test.step('Click "Explore Products" link', async () => {
