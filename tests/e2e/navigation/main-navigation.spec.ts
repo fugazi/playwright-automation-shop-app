@@ -49,13 +49,16 @@ test.describe('Main Navigation @smoke', () => {
   });
 
   test('Theme toggle changes appearance', async ({ homePage, page }) => {
+    let initialIsDark = false;
+
     await test.step('Navigate to home page', async () => {
       await homePage.goto();
     });
 
     await test.step('Get initial theme state', async () => {
-      // Store initial state via HTML element class
-      await expect(page.locator('html')).toHaveAttribute('class', /.*/);
+      await expect(page.locator('html')).toHaveClass(/\b(light|dark)\b/);
+      const initialClass = (await page.locator('html').getAttribute('class')) ?? '';
+      initialIsDark = /\bdark\b/.test(initialClass);
     });
 
     await test.step('Click theme toggle button', async () => {
@@ -63,8 +66,8 @@ test.describe('Main Navigation @smoke', () => {
     });
 
     await test.step('Verify theme class toggled on html element', async () => {
-      // After toggling, the class should have changed (dark/light mode)
-      await expect(page.locator('html')).toHaveAttribute('class', /dark/);
+      const expectedTheme = initialIsDark ? /\blight\b/ : /\bdark\b/;
+      await expect(page.locator('html')).toHaveClass(expectedTheme);
     });
   });
 

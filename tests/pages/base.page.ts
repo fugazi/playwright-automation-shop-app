@@ -17,10 +17,30 @@ export class BasePage {
     this.footer = new FooterComponent(page);
   }
 
-  /** Navigate to a path relative to the configured baseURL. */
+  /** Navigate to a path relative to the configured baseURL and wait for client hydration. */
   async navigateTo(path: string): Promise<this> {
     await this.page.goto(path);
+    await this.waitForHydration();
     return this;
+  }
+
+  /** Wait until Next.js client providers (theme + localStorage auth state) finish hydrating. */
+  async waitForHydration(): Promise<void> {
+    await this.page.waitForFunction(() => {
+      const htmlClass = document.documentElement.className || '';
+      const themeHydrated =
+        htmlClass.includes('light') || htmlClass.includes('dark');
+      const hasAuthStorage = Boolean(
+        window.localStorage.getItem('ecommerce_auth_user'),
+      );
+      const userMenuRendered = Boolean(
+        document.querySelector('button[aria-label="User menu"]') ||
+          Array.from(document.querySelectorAll('button')).some(
+            (b) => b.textContent?.trim() === 'User menu',
+          ),
+      );
+      return themeHydrated && (!hasAuthStorage || userMenuRendered);
+    });
   }
 
   /** Get the page heading (level 1). */

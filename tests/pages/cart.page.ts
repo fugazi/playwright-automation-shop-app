@@ -1,4 +1,4 @@
-import { type Locator } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 import { BasePage } from './base.page';
 
 /**
@@ -64,6 +64,21 @@ export class CartPage extends BasePage {
     return this.cartItem(productName).getByRole('button', {
       name: 'Increase quantity',
     });
+  }
+
+  /** Remove all items currently in the cart and wait for each removal to settle. */
+  async clearCart(): Promise<void> {
+    await expect(
+      this.emptyCartHeading.or(this.cartItems.first()),
+    ).toBeVisible();
+    while ((await this.cartItems.count()) > 0) {
+      const currentCount = await this.cartItems.count();
+      await this.page
+        .getByRole('button', { name: /Remove .+ from cart/ })
+        .first()
+        .click();
+      await expect(this.cartItems).toHaveCount(currentCount - 1);
+    }
   }
 
   // ── Order Summary ─────────────────────────────────────────────────
