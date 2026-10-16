@@ -4,8 +4,8 @@ This document provides essential information for AI coding agents working in thi
 
 ## Project Overview
 
-- **Framework**: Playwright v1.59.1 with TypeScript
-- **Package Manager**: pnpm (v10.28.2)
+- **Framework**: Playwright v1.64.1 with TypeScript
+- **Package Manager**: pnpm (v12.5.1)
 - **Target Application**: https://music-tech-shop.vercel.app
 - **Test Directory**: `./tests`
 
