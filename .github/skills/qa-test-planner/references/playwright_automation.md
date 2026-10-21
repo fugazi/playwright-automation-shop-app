@@ -7,7 +7,7 @@ Comprehensive guide for browser automation, test generation, and UI validation u
 ## Prerequisites
 
 **Required:**
-- Node.js installed (v18+)
+- Node.js installed (v22.23.4+)
 - Playwright MCP server configured
 - Application running locally or accessible URL
 
@@ -429,7 +429,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npx playwright test
