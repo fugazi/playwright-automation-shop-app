@@ -8,8 +8,9 @@ Capture browser automation sessions as video for debugging, documentation, or ve
 # Open browser first
 playwright-cli open
 
-# Start recording
-playwright-cli video-start demo.webm
+# Start recording, --cursor renders an animated mouse cursor that travels to each action point
+# and paces actions by 800ms so that it has time to travel
+playwright-cli video-start demo.webm --cursor --fps=60
 
 # Add a chapter marker for section transitions
 playwright-cli video-chapter "Getting Started" --description="Opening the homepage" --duration=2000
@@ -27,6 +28,56 @@ playwright-cli fill e2 "test input"
 playwright-cli video-stop
 ```
 
+## Cursor, Target Highlight and Click Point
+
+Three decorations can be drawn for each action: the mouse **cursor**, a **highlight** box around the
+target element and a **point** marker at the click point. A **title** callout naming the action comes
+with `video-show-actions`. The cursor is the only one `video-start --cursor` turns on; the rest are
+opt-in and styled with plain CSS declarations, so they look exactly the way you want.
+
+```bash
+# Cursor only, nothing else on screen
+playwright-cli video-start demo.webm --cursor
+
+# Action callout, plus a red click point and a dark frame around the target
+playwright-cli video-show-actions --duration=800 --position=top-right \
+  --point-style="width: 20px; height: 20px; border-radius: 50%; background: rgba(255,0,0,.7)" \
+  --highlight-style="outline: 2px solid #333; background: rgba(0,128,255,.15)" \
+  --title-style="font-size: 16px"
+
+# Stop annotating actions
+playwright-cli video-hide-actions
+```
+
+The same options are available programmatically, which is the better choice for hero scripts:
+
+```js
+await page.screencast.showActions({
+  // 'pointer' (default) animates the cursor from the previous action point, 'none' hides it.
+  cursor: 'pointer',
+  // How long decorations stay on screen. Actions are paced by this delay, 500ms by default.
+  duration: 800,
+  // Where the action title goes: top-left, top, top-right, bottom-left, bottom, bottom-right.
+  position: 'top-right',
+  style: {
+    // Marker at the click point. The element is zero-sized and centered on the point,
+    // so give it a size, or draw around the point with box-shadow. Hidden when omitted.
+    point: 'width: 20px; height: 20px; border-radius: 50%; background: rgba(255, 0, 0, .7)',
+    // Box that covers the target element. Hidden when omitted.
+    // Prefer `outline` over `border`, it does not shrink the box.
+    highlight: 'outline: 2px solid #333; background: rgba(0, 128, 255, .15)',
+    // The action title. Use 'display: none' to keep the cursor but drop the callout.
+    title: 'font-size: 16px',
+  },
+});
+```
+
+Notes:
+- All decorations fade out over `duration`. Override `animation` in a style to do something else.
+- The cursor stays on screen at the last action point between actions and across navigations,
+  and travels along a slightly curved path, so it reads as a hand moving a mouse.
+- Call `page.screencast.hideActions()` to stop annotating and hide the cursor.
+
 ## Best Practices
 
 ### 1. Use Descriptive Filenames
@@ -40,17 +91,25 @@ playwright-cli video-start recordings/checkout-test-run-42.webm
 ### 2. Record entire hero scripts.
 
 When recording a video for the user or as a proof of work, it is best to create a code snippet and execute it with run-code.
-It allows pulling appropriate pauses between the actions and annotating the video. There are new Playwright APIs for that.
+It allows inserting appropriate pauses between the actions and annotating the video. There are new Playwright APIs for that.
 
-1) Perform scenario using CLI and take note of all locators and actions. You'll need those locators to request thier bounding boxes for highlight.
+1) Perform scenario using CLI and take note of all locators and actions. You'll need those locators to request their bounding boxes for highlight.
 2) Create a file with the intended script for video (below). Use pressSequentially w/ delay for nice typing, make reasonable pauses.
-3) Use playwright-cli run-code --file your-script.js
+3) Use playwright-cli run-code --filename your-script.js
 
 **Important**: Overlays are `pointer-events: none` — they do not interfere with page interactions. You can safely keep sticky overlays visible while clicking, filling, or performing any actions on the page.
 
 ```js
 async page => {
-  await page.screencast.start({ path: 'video.webm', size: { width: 1280, height: 800 } });
+  await page.screencast.start({ path: 'video.webm', size: { width: 1280, height: 800 }, fps: 60 });
+  // Show the cursor and mark the click point, and pace actions by 800ms.
+  await page.screencast.showActions({
+    duration: 800,
+    style: {
+      point: 'width: 20px; height: 20px; border-radius: 50%; background: rgba(255, 0, 0, .7)',
+      title: 'display: none',
+    },
+  });
   await page.goto('https://demo.playwright.dev/todomvc');
 
   // Show a chapter card — blurs the page and shows a dialog.
@@ -127,6 +186,20 @@ Embrace creativity, overlays are powerful.
 | `page.screencast.showOverlay(html, { duration? })` | Custom HTML overlay — use for callouts, labels, highlights |
 | `disposable.dispose()` | Remove a sticky overlay added without duration |
 | `page.screencast.hideOverlays()` / `page.screencast.showOverlays()` | Temporarily hide/show all overlays |
+| `page.screencast.showActions({ cursor, duration, position, style })` | Cursor, click point, target highlight and action title |
+| `page.screencast.hideActions()` | Stop annotating actions and hide the cursor |
+
+### 3. Attach the recording to the pull request
+
+A hero script recording is the best proof of work for a user-facing change. GitHub accepts WebM as is, so once the recording looks right, attach it with `gh` 2.99+ instead of describing the flow in words:
+
+```bash
+gh pr create --title "feat(todo): add items inline" --body-file body.md --attach ./demo.webm
+gh pr comment 123 --body "Walkthrough of the new flow." --attach ./demo.webm
+gh issue comment 456 --body "Recording of the repro steps." --attach ./repro.webm
+```
+
+`gh` appends unreferenced attachments to the end of the body, which is the right place for a walkthrough. Videos are limited to 10 MB on free plans and 100 MB on paid plans, so keep the script focused, record at a modest size such as 1280x800 and drop chapters that do not add to the story. See [pr-attachments.md](pr-attachments.md) for the full set of commands, including attaching test artifacts from CI.
 
 ## Tracing vs Video
 
