@@ -60,3 +60,6 @@ tmp/
 .squad/sessions/
 # Squad: SubSquad activation file (local to this machine)
 .squad-workstream
+
+# Claude Code: local settings and machine-specific skill symlinks
+.claude/
